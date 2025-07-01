@@ -9,6 +9,9 @@ fi
 SRC="$1"
 DEST="$2"
 
+echo "source is $SRC"
+echo "dest   is $DEST"
+
 # Check if source directory exists
 if [ ! -d "$SRC" ]; then
     echo "Error: Source directory '$SRC' does not exist."
@@ -22,4 +25,16 @@ if [ ! -d "$DEST" ]; then
 fi
 
 # Run rsync with progress and verbose output
-rsync -avh --progress "$SRC" "$DEST"
+rsync -avh \
+    --no-times \
+    --progress \
+    --exclude='@eaDir/' \
+    --exclude='.DS_Store' \
+    --exclude='.AppleDouble/' \
+    --exclude='.AppleDB' \
+    --exclude='.Spotlight-V100/' \
+    --exclude='.Trashes/' \
+    --exclude='.thumbnails/' \
+    "$SRC" \
+    "$DEST"
+
