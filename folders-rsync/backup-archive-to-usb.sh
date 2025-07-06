@@ -1,25 +1,36 @@
 #!/bin/bash
 
-# all folders are sync'd to an external usb drive
-dest_path="/volumeUSB1/usbshare/"
-
 # declare an associative array
 declare -A rsync_map
 
-# volume 1
+# Function to add values to jobs
+function add_to_map {
+    local dest_path=$1
+    local src_path=$2
+    local folders=("${@:3}") 
+    for i in "${!folders[@]}"
+    do
+        src="$src_path${folders[i]}"
+        dest="$dest_path${folders[i]}"
+        rsync_map[$src]=$dest
+    done
+}
+
+# all folders are sync'd to an external usb drive
+dest_path="/volumeUSB1/usbshare/"
+
+# volume1
 src_path="/volume1/icebox/"
+
 folders=(
     "___media-dvd-isos/"
 )
 
-for i in "${!folders[@]}"
-do
-  src="$src_path${folders[i]}"
-  dest="$dest_path${folders[i]}"
-  rsync_map[$src]=$dest
-done
+add_to_map $dest_path $src_path "${folders[@]}"
 
+# volume2
 src_path="/volume2/deepfreeze/"
+
 folders=(
     "___archive-kiwix/"
     "___family-ellegood-docs/"
@@ -34,25 +45,10 @@ folders=(
     "___media-movies/"
 )
 
-for i in "${!folders[@]}"
-do
-  src="$src_path${folders[i]}"
-  dest="$dest_path${folders[i]}"
-  rsync_map[$src]=$dest
-done
+add_to_map $dest_path $src_path "${folders[@]}"
 
+# output
 for key in "${!rsync_map[@]}"; do
    echo "$key -> ${rsync_map[$key]}"
+   ./folders-sync.sh "$key" "${rsync_map[$key]}"
 done
-
-
-#  ./folders-sync.sh "$key" "${jobs[$key]}"
-#index=0
-#while [ $index -lt ${#src_array[@]} ]
-#do
-#  ./folders-sync.sh "${src_array[index]}" "${dest_array[index]}"
-#  ((index++))
-#done
-
-# Call the sync script with those parameters
-# ./folders-sync.sh "${src_array[0]}" "${dest_array[0]}"

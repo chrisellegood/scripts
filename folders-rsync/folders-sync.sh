@@ -18,10 +18,9 @@ if [ ! -d "$SRC" ]; then
     exit 2
 fi
 
-# Check if destination directory exists
+# Ensure destination directory exists and run rsync
 if [ ! -d "$DEST" ]; then
-    echo "Error: Destination directory '$DEST' does not exist."
-    exit 3
+    mkdir -p "$DEST"
 fi
 
 # Run rsync with progress and verbose output
